@@ -1,19 +1,12 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-#include "allegro.h"
-#include "dtypes.h"
+
 #include "task.h"
 #include "util.h"
 
 #define W 800
 #define H 600
-
-
-BITMAP *bground_b; 
-BITMAP *portiere_b;
-BITMAP *palla_b;
-BITMAP *porta_b;
 
 
 void init_attr(void){
@@ -36,6 +29,7 @@ void init_bground(void){
 	int h = 520;
 	int x, y;
 
+	bground_b = create_bitmap(w, h);
 	tmp = load_bitmap("img/campo.bmp", NULL);
 	if(tmp == NULL){
 		printf("background file not found\n");
@@ -44,7 +38,7 @@ void init_bground(void){
 
 	x = SCREEN_W/2 - bground_b->w/2;
 	y = SCREEN_H - bground_b->h - 10;
-	bground_b = create_bitmap(w, h);
+
 	stretch_sprite(bground_b, tmp, 0, 0, w, h);
 	blit(bground_b, screen, 0, 0, x, y, SCREEN_W, SCREEN_H);
 
@@ -52,6 +46,7 @@ void init_bground(void){
 	border.low_x = border.up_x + bground_b->w;
 	border.up_y = y;
 	border.low_y = border.up_y + bground_b->h;
+
 }
 
 void init_portiere(void){
@@ -102,7 +97,7 @@ void init_porta(void){
 	BITMAP *tmp;
 	int w = 390;
 	int h = 50;
-	int bground_h = SCREEN_H - bground_b->h - 10;
+	int bground_y = SCREEN_H - bground_b->h - 10;
 
 	tmp = load_bitmap("img/porta.bmp", NULL);
 	if(tmp == NULL){
@@ -113,7 +108,7 @@ void init_porta(void){
 	porta_b = create_bitmap(w, h);
 	stretch_sprite(porta_b, tmp, 0, 0, w, h);
 	blit(porta_b, screen, 0, 0, SCREEN_W/2 - porta_b->w/2, 
-								bground_h - porta_b->h, 
+								bground_y - porta_b->h, 
 								SCREEN_W, SCREEN_H);
 
 }

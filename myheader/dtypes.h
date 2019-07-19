@@ -9,13 +9,12 @@ typedef struct portiere_t {
 } portiere_t;
 
 typedef struct vector_t {
-	int x, y;
+	float x, y;
 } vector_t;
 
 typedef struct palla_t {
 	int x, y;		// posizione della palla
-	float v;		// velocità della palla
-	vector_t dir;	// direzione della palla
+	vector_t v;	// direzione della palla
 	pthread_mutex_t m;
 	pthread_cond_t ready;
 } palla_t;
