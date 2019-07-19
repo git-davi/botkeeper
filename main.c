@@ -42,10 +42,10 @@ void init_bground(void){
 	stretch_sprite(bground_b, tmp, 0, 0, w, h);
 	blit(bground_b, screen, 0, 0, x, y, SCREEN_W, SCREEN_H);
 
-	border.up_x = x;
-	border.low_x = border.up_x + bground_b->w;
-	border.up_y = y;
-	border.low_y = border.up_y + bground_b->h;
+	palla.border_x.low = x;
+	palla.border_x.up = palla.border_x.low + bground_b->w;
+	palla.border_y.low = y;
+	palla.border_y.up = palla.border_y.low + bground_b->h;
 
 }
 
@@ -66,7 +66,7 @@ void init_portiere(void){
 	
 	portiere.x = center_x(portiere_b, x);
 	portiere.y = center_y(portiere_b, y);
-	portiere.v = 0;
+	portiere.dir = 0;
 }
 
 
@@ -86,16 +86,15 @@ void init_palla(void){
 
 	palla.x = center_x(palla_b, x);
 	palla.y = center_y(palla_b, y);
-	palla.v = 0;
-	palla.dir.x = 0;
-	palla.dir.y = 0;
+	palla.v.x = 0;
+	palla.v.y = 0;
 
 }
 
 
 void init_porta(void){
 	BITMAP *tmp;
-	int w = 390;
+	int w = 350;
 	int h = 50;
 	int bground_y = SCREEN_H - bground_b->h - 10;
 
@@ -110,7 +109,9 @@ void init_porta(void){
 	blit(porta_b, screen, 0, 0, SCREEN_W/2 - porta_b->w/2, 
 								bground_y - porta_b->h, 
 								SCREEN_W, SCREEN_H);
-
+	
+	portiere.border.low = SCREEN_W/2 - porta_b->w/2;
+	portiere.border.up = portiere.border.low + porta_b->w;
 }
 
 

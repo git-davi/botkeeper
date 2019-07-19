@@ -14,7 +14,6 @@ extern BITMAP *porta_b;
 
 extern palla_t palla;
 extern portiere_t portiere;
-extern border_t border;
 
 // funzione per l'avvio di tutti i task
 void init_tasks(void);
