@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "task.h"
 #include "util.h"
@@ -42,10 +43,10 @@ void init_bground(void){
 	stretch_sprite(bground_b, tmp, 0, 0, w, h);
 	blit(bground_b, screen, 0, 0, x, y, SCREEN_W, SCREEN_H);
 
-	palla.border_x.low = x;
-	palla.border_x.up = palla.border_x.low + bground_b->w;
-	palla.border_y.low = y;
-	palla.border_y.up = palla.border_y.low + bground_b->h;
+	campo.border_x.low = x;
+	campo.border_x.up = campo.border_x.low + bground_b->w;
+	campo.border_y.low = y;
+	campo.border_y.up = campo.border_y.low + bground_b->h;
 
 }
 
@@ -79,7 +80,6 @@ void init_palla(void){
 		printf("palla file not found\n");
 		exit(1);
 	}
-
 	x = SCREEN_W/2 - palla_b->w/2;
 	y = SCREEN_H/2 + 120;
 	draw_sprite(screen, palla_b, x, y);
@@ -88,6 +88,7 @@ void init_palla(void){
 	palla.y = center_y(palla_b, y);
 	palla.v.x = 0;
 	palla.v.y = 0;
+	palla.angle = atan(palla.y/palla.x);
 
 }
 

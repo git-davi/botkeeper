@@ -20,11 +20,16 @@ typedef struct vector_t {
 
 typedef struct palla_t {
 	int x, y;		// posizione della palla
-	vector_t v;	// direzione della palla
-	border_t border_x;
-	border_t border_y;
+	vector_t v;		// direzione della palla
 	pthread_mutex_t m;
 	pthread_cond_t ready;
+	float angle;
 } palla_t;
+
+typedef struct campo_t {
+        border_t border_x;
+	border_t border_y;
+} campo_t;
+
 
 #endif
