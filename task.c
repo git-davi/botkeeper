@@ -56,16 +56,49 @@ void *task_palla(void *arg){
 	return NULL;
 }
 
-void *task_grafico(void *arg){
-	int palla_x;
-	int palla_y;
-	int portiere_x;
-        int portiere_y;
+
+void collisioni_bordi(void){
 	int outl;
 	int outr;
 	int outt;
 	int outb;
 
+	//calcolo le collisioni contro i bordi
+	outl = (palla.x <= border.x.low);
+	outr = (palla.x >= border.x.up);
+	outt = (palla.y <= border.y.low);
+	outb = (palla.y >= border.y.up);
+	
+	if(outl)
+		palla.x = border.x.low;
+	if(outr)
+        palla.x = border.x.up;
+	if(outl || outr)
+		palla.v.x = -palla.v.x;
+	
+	if(outt)
+        palla.y = border.x.low;
+	if(outb)
+        palla.y = border.x.up;
+	if(outt || outb)
+        palla.v.y = -palla.v.y;
+        
+
+void collisione_portiere(void){
+	// finire 
+	outl = (palla.x >= portiere_x);
+	outr = (palla.x >= portiere_x + portiere_b->w);
+	outt = (palla.y <= portiere_y);
+	outb = (palla.y >= portiere_y + portiere_b->h);
+
+}
+
+void *task_grafico(void *arg){
+	int palla_x;
+	int palla_y;
+	int portiere_x;
+    int portiere_y;
+	
 	//ottengo le coordinate della palla
 	pthread_mutex_lock(&palla.m);
 	palla_x=palla.x;
@@ -74,9 +107,9 @@ void *task_grafico(void *arg){
 
 	//ottengo le coordinate del portiere
 	pthread_mutex_lock(&portiere.m);
-        portiere_x=portiere.x;
-        portiere_y=portiere.y;
-        pthread_mutex_unlock(&portiere.m);
+    portiere_x=portiere.x;
+    portiere_y=portiere.y;
+    pthread_mutex_unlock(&portiere.m);
 
 	//decentro palla e portiere
 	palla_x = decenter_x(palla_b, palla_x);
@@ -85,41 +118,11 @@ void *task_grafico(void *arg){
 	portiere_y = decenter_y(portiere_b, portiere_y);
 
 	//disegno campo,portiere,palla
-	blit(bground_b, screen, 0, 0, campo.border_x.low, campo.border_y.low,
-		SCREEN_W, SCREEN_H);
+	blit(bground_b, screen, 0, 0, 
+			campo.border_x.low, campo.border_y.low,
+			SCREEN_W, SCREEN_H);
 	draw_sprite(screen, portiere_b, portiere_x, portiere_y);
 	draw_sprite(screen, palla_b, palla_x, palla_y);
-
-	//calcolo le collisioni contro i bordi
-	outl = (palla.x <= border.x.low);
-	outr = (palla.x >= border.x.up);
-	outt = (palla.y <= border.y.low);
-	outb = (palla.y >= border.y.up);
-	
-	if(outl){
-		palla.x = border.x.low;
-	}
-	if(outr){
-                palla.x = border.x.up;
-        }
-	if(outl || outr){
-		palla.v.x = -palla.v.x;
-	}
-	if(outt){
-                palla.y = border.x.low;
-        }
-	if(outb){
-                palla.y = border.x.up;
-        }
-	if(outt || outb){
-                palla.v.y = -palla.v.y;
-        }
-
-	outl = (palla.x >= portiere_x);
-        outr = (palla.x >= portiere_x + portiere_b->w);
-        outt = (palla.y <= portiere_y);
-        outb = (palla.y >= portiere_y + portiere_b->h);
- 
 	
 	return NULL;
 }

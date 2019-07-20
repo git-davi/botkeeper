@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <math.h>
 
 #include "task.h"
 #include "util.h"
@@ -88,7 +87,6 @@ void init_palla(void){
 	palla.y = center_y(palla_b, y);
 	palla.v.x = 0;
 	palla.v.y = 0;
-	palla.angle = atan(palla.y/palla.x);
 
 }
 

@@ -23,7 +23,6 @@ typedef struct palla_t {
 	vector_t v;		// direzione della palla
 	pthread_mutex_t m;
 	pthread_cond_t ready;
-	float angle;
 } palla_t;
 
 typedef struct campo_t {
