@@ -64,8 +64,8 @@ void init_portiere(void){
 	draw_sprite(screen, portiere_b, x, y);
 
 	
-	portiere.x = center_x(portiere_b, x);
-	portiere.y = center_y(portiere_b, y);
+	portiere.pos.x = center_x(portiere_b, x);
+	portiere.pos.y = center_y(portiere_b, y);
 	portiere.dir = 0;
 }
 
@@ -83,8 +83,8 @@ void init_palla(void){
 	y = SCREEN_H/2 + 120;
 	draw_sprite(screen, palla_b, x, y);
 
-	palla.x = center_x(palla_b, x);
-	palla.y = center_y(palla_b, y);
+	palla.pos.x = center_x(palla_b, x);
+	palla.pos.y = center_y(palla_b, y);
 	palla.v.x = 0;
 	palla.v.y = 0;
 
