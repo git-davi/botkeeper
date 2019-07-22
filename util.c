@@ -54,3 +54,7 @@ retta_t retta_due_punti(vector_t p1, vector_t p2){
 	return r;
 }
 
+
+int sign(int x){
+	return (x > 0) - (x < 0);
+}

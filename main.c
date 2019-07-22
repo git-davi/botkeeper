@@ -85,8 +85,8 @@ void init_palla(void){
 
 	palla.pos.x = center_x(palla_b, x);
 	palla.pos.y = center_y(palla_b, y);
-	palla.v.x = 2;
-	palla.v.y = 1;
+	palla.v.x = 200;
+	palla.v.y = 400;
 
 }
 

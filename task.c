@@ -19,7 +19,10 @@ int user_id;
 void task_portiere(void){
 	// aggiorna la sua posizione in base alla 
 	// traiettoria della palla
-	int tmp_dir;	
+	int tmp_dir;
+	int next_pos_palla;	// calcola la posizione futura della palla
+						// per anticiparla 
+ 	
 	/*int i;
 	i = ptask_get_index();*/
 
@@ -28,8 +31,11 @@ void task_portiere(void){
 		// trovo la direzione del portiere 
 		// -> verrà usata come vettore velocità (scalandola)
 		pthread_mutex_lock(&palla.m);
-		tmp_dir = palla.pos.x - portiere.pos.x;
+		next_pos_palla = (int)(	(double)palla.pos.x + 
+								(double)palla.v.x/BALL_SCALING_FACTOR * 								POR_ANTICIPATION_MS);
 		pthread_mutex_unlock(&palla.m);
+		
+		tmp_dir = next_pos_palla - portiere.pos.x;
 
 		// porto a norma 1 la direzione in x, voglio che si muova 
 		// alla stessa velocità a seconda della posizione della palla
@@ -68,13 +74,21 @@ void task_palla(void){
 		//				affinchè il vettore abbia senso
 
 		// attrito rallenta la palla
-	/*	
+		/*
+		questa versione decresce esponenzialmente FRICTION_FACTOR^N
+		palla.v.x = (int)((double)palla.v.x * FRICTION_FACTOR);
+		palla.v.y = (int)((double)palla.v.y * FRICTION_FACTOR);
+		*/
+
+		int ratio = abs(palla.v.y) / abs(palla.v.x);
 		if(palla.v.x != 0)
-			palla.v.x -= FRICTION_FACTOR;
+			palla.v.x = sign(palla.v.x) * (abs(palla.v.x) - FRICTION_FACTOR); 
 		if(palla.v.y != 0)
-			palla.v.y -= FRICTION_FACTOR;
-	*/
-		if(palla.v.x==0 && palla.v.y==0)
+			palla.v.y = sign(palla.v.y) * (abs(palla.v.y) - 
+													FRICTION_FACTOR * ratio);	
+		
+
+		if(palla.v.x == 0 && palla.v.y == 0)
 			ptask_activate(user_id);
 
 		pthread_mutex_unlock(&palla.m);
