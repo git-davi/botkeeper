@@ -14,5 +14,11 @@ int main(void){
 	vector_t p = {2, 3};
 	printf("la distanza è %f\n", dist_punto_retta(p, r));
 
+	int x = -5;
+
+	x = x / abs(x);
+
+	printf("x e' %d\n", x);
+
 	return EXIT_SUCCESS;
 }

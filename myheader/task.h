@@ -4,7 +4,22 @@
 #include "dtypes.h"
 #include "allegro.h"
 
-#define T 10
+#define T 20	// period of tasks
+#define C 5		// capacity of tasks
+
+
+#define POR_SCALING_FACTOR 5
+#define BALL_SCALING_FACTOR 5
+#define FRICTION_FACTOR 1
+#define M 1000000000000000000
+#define PRIO 99
+
+#define L1 1	 	//			L1	
+#define L2 2		//		---------
+#define L3 3		//	L3	|       | L2
+#define L4 4		//		|       |
+#define LATI 4		//		---------
+					//			L4
 
 
 extern BITMAP *bground_b; 

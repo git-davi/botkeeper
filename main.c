@@ -71,7 +71,7 @@ void init_portiere(void){
 
 
 void init_palla(void){
-	// size di portiere_p : 100x100 
+	// size di palla_p : 100x100 
 	int x, y;
 
 	palla_b = load_bitmap("img/palla_p.bmp", NULL);
@@ -85,8 +85,8 @@ void init_palla(void){
 
 	palla.pos.x = center_x(palla_b, x);
 	palla.pos.y = center_y(palla_b, y);
-	palla.v.x = 0;
-	palla.v.y = 0;
+	palla.v.x = 2;
+	palla.v.y = 1;
 
 }
 
@@ -120,13 +120,13 @@ void init(void){
 	install_keyboard();
 	set_color_depth(desktop_color_depth());
 	set_gfx_mode(GFX_AUTODETECT_WINDOWED, W, H, 0, 0);
-	
 	init_bground();	
 	init_portiere();
 	init_palla();
 	init_porta();
 
 	init_attr();	//init mutex e cond variables
+	init_tasks();
 }
 
 
