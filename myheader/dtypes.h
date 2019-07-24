@@ -16,6 +16,11 @@ typedef struct vector_t {
 	int x, y;
 } vector_t;
 
+typedef struct freccia_t {
+	double x, y;
+	int pot;
+	pthread_mutex_t m;
+} freccia_t;
 
 typedef struct border_t{
 	int up, low;

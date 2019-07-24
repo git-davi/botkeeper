@@ -12,9 +12,11 @@ BITMAP *porta_b;
 palla_t palla;
 portiere_t portiere;
 campo_t campo;
+freccia_t freccia;
 
 int low_x, up_x, low_y, up_y;
 int user_id;
+
 
 void task_portiere(void){
 	// aggiorna la sua posizione in base alla 
@@ -22,17 +24,18 @@ void task_portiere(void){
 	int tmp_dir;
 	int next_pos_palla;	// calcola la posizione futura della palla
 						// per anticiparla 
- 	
-	/*int i;
-	i = ptask_get_index();*/
 
 	while(1){
 		pthread_mutex_lock(&portiere.m);
 		// trovo la direzione del portiere 
 		// -> verrà usata come vettore velocità (scalandola)
+		next_pos_palla = portiere.pos.x;
+
 		pthread_mutex_lock(&palla.m);
-		next_pos_palla = (int)(	(double)palla.pos.x + 
-								(double)palla.v.x/BALL_SCALING_FACTOR * 								POR_ANTICIPATION_MS);
+		if(palla.v.x != 0 && palla.v.y != 0){
+			next_pos_palla = (int)(	(double)palla.pos.x + 
+									(double)palla.v.x/BALL_SCALING_FACTOR * 									POR_ANTICIPATION_MS);
+		}
 		pthread_mutex_unlock(&palla.m);
 		
 		tmp_dir = next_pos_palla - portiere.pos.x;
@@ -59,6 +62,7 @@ void task_portiere(void){
 }
 
 void task_palla(void){
+	double ratio;
 	// aggiorno posizione della palla
 	/*int i;
 	i = ptask_get_index();*/
@@ -79,8 +83,10 @@ void task_palla(void){
 		palla.v.x = (int)((double)palla.v.x * FRICTION_FACTOR);
 		palla.v.y = (int)((double)palla.v.y * FRICTION_FACTOR);
 		*/
-
-		int ratio = abs(palla.v.y) / abs(palla.v.x);
+		if(palla.v.x == 0)
+			ratio = (double)abs(palla.v.y) / 1;	
+		else
+			ratio = (double)abs(palla.v.y) / (double)abs(palla.v.x);
 		if(palla.v.x != 0)
 			palla.v.x = sign(palla.v.x) * (abs(palla.v.x) - FRICTION_FACTOR); 
 		if(palla.v.y != 0)
@@ -109,7 +115,7 @@ void collisione_bordi(void){
 	// margine della pallina, uguale per ogni asse tanto è quadrata
 	int margin;
 	
-	margin = palla_b->w/2;
+	margin = palla_b->w/2 + 10;
 	//calcolo le collisioni contro i bordi
 	outl = (palla.pos.x <= campo.border_x.low + margin);
 	outr = (palla.pos.x >= campo.border_x.up - margin);
@@ -281,21 +287,71 @@ void task_grafico(void){
 }
 
 void task_user(void){
+	double tmp_v_x, tmp_v_y;
+	int pot;
 
-	/*int i;
-	i = ptask_get_index();*/
+	// potenza tiro massima lungo ogni componente è 300
 	ptask_wait_for_activation();
 	while(1){
-		//init freccia e potenza
-		while(!key[KEY_SPACE]){
-			//aggiornamento rotazione freccia
-		}	
-		//leggi rotazione e assegna a palla
-		while(!key[KEY_SPACE]){
-			//aggiornamento potenza
-		}
-		//leggi potenza e assegna a palla
+		
+		while(!key[KEY_SPACE]){ }	
+		
+		pthread_mutex_lock(&freccia.m);
+		tmp_v_x = freccia.x;
+		tmp_v_y = freccia.y;
+		pthread_mutex_unlock(&freccia.m);
+	
+		key[KEY_SPACE] = 0;
+		while(!key[KEY_SPACE]){ }
+		
+		pthread_mutex_lock(&freccia.m);
+		pot = freccia.pot;
+		pthread_mutex_unlock(&freccia.m);
+
+		set_velocita_palla((int)tmp_v_x*pot, (int)tmp_v_y*pot);
+
 		ptask_wait_for_activation();
+	}
+
+}
+
+void task_freccia(void){
+	double adder = 0.1;
+	int raggio = 10;
+	
+	while(1){
+		
+		pthread_mutex_lock(&freccia.m);
+		if(freccia.x <= -10) 
+			adder = 0.1;
+		if(freccia.x >= 10) 
+			adder = -0.1;
+		freccia.x += adder;
+		freccia.y = sqrt(raggio * raggio - (freccia.x * freccia.x));
+		pthread_mutex_unlock(&freccia.m);
+		
+		ptask_wait_for_period();
+
+	}
+		
+}
+
+
+void task_potenza(void){
+	int adder = 1;
+
+	while(1){
+
+		pthread_mutex_lock(&freccia.m);
+		if(freccia.pot >= 30)
+			adder = -1;
+		if(freccia.pot <= 0)
+			adder = 1;
+		freccia.pot += adder;
+		pthread_mutex_unlock(&freccia.m);
+	
+		ptask_wait_for_period();
+
 	}
 
 }
@@ -306,4 +362,6 @@ void init_tasks(void){
 	ptask_create_edf(task_palla, T, C, T, NOW);
 	ptask_create_edf(task_portiere, T, C, T, NOW);
 	ptask_create_edf(task_grafico, T, C, T, NOW);
+	ptask_create_edf(task_potenza, T, C, T, NOW);
+	ptask_create_edf(task_freccia, T, C, T, NOW);
 }

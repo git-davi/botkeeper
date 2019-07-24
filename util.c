@@ -1,6 +1,7 @@
 // file per le funzioni ausialiarie
 #include <math.h>
 #include "util.h"
+#include "task.h"
 
 #define N 2
 
@@ -58,3 +59,14 @@ retta_t retta_due_punti(vector_t p1, vector_t p2){
 int sign(int x){
 	return (x > 0) - (x < 0);
 }
+
+void set_velocita_palla(int x, int y){
+	
+	pthread_mutex_lock(&palla.m);	
+	palla.v.x = x;
+	palla.v.y = y;
+	pthread_mutex_unlock(&palla.m);
+
+}
+
+

@@ -3,8 +3,9 @@
 
 #include "dtypes.h"
 #include "allegro.h"
+#include <math.h>
 
-#define T 20	// period of tasks
+#define T 30	// period of tasks
 #define C 5		// capacity of tasks
 
 
@@ -27,11 +28,12 @@
 extern BITMAP *bground_b; 
 extern BITMAP *portiere_b;
 extern BITMAP *palla_b;
-extern BITMAP *porta_b;	
+extern BITMAP *porta_b;
 
 extern palla_t palla;
 extern portiere_t portiere;
 extern campo_t campo;
+extern freccia_t freccia;
 
 // funzione per l'avvio di tutti i task
 void init_tasks(void);

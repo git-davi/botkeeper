@@ -13,5 +13,5 @@ double dist_punto_retta(vector_t p, retta_t r);
 vector_t reflect_x(vector_t v);
 vector_t reflect_y(vector_t v);
 int sign(int x);
-
+void set_velocita_palla(int x, int y);
 #endif

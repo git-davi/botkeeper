@@ -19,9 +19,14 @@ void init_attr(void){
 	pthread_cond_init(&palla.ready, &ca);
 	pthread_mutex_init(&palla.m, &ma);
 	pthread_mutex_init(&portiere.m, &ma);
-	
+	pthread_mutex_init(&freccia.m, &ma);
 }
 
+void init_freccia(void){
+	freccia.pot = 0;
+	freccia.x = -1;
+	freccia.y = 0;
+}
 
 void init_bground(void){
 	BITMAP *tmp;
@@ -85,8 +90,9 @@ void init_palla(void){
 
 	palla.pos.x = center_x(palla_b, x);
 	palla.pos.y = center_y(palla_b, y);
-	palla.v.x = 200;
-	palla.v.y = 400;
+	//la potenza della palla deve essere al massimo 300
+	palla.v.x = 0;
+	palla.v.y = 0;
 
 }
 
@@ -124,6 +130,7 @@ void init(void){
 	init_portiere();
 	init_palla();
 	init_porta();
+	init_freccia();
 
 	init_attr();	//init mutex e cond variables
 	init_tasks();
@@ -139,7 +146,7 @@ void stop(void){
 int main(void){
 	init();
 
-	readkey();
+	while(!key[KEY_ESC]){}
 		
 	stop();
 	return 0;
