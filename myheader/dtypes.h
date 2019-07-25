@@ -17,8 +17,11 @@ typedef struct vector_t {
 } vector_t;
 
 typedef struct freccia_t {
-	double x, y;
+	double x, y;			//direzione freccia
+	vector_t barra;			//posizione barra
+	vector_t indicatore;	//posizione indicatore
 	int pot;
+	int dir_chosen;
 	pthread_mutex_t m;
 } freccia_t;
 

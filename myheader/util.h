@@ -14,4 +14,16 @@ vector_t reflect_x(vector_t v);
 vector_t reflect_y(vector_t v);
 int sign(int x);
 void set_velocita_palla(int x, int y);
+void leggi_coordinate(	int *palla_x, int *palla_y, 
+						int *portiere_x, int *portiere_y,
+						int *barra_x, int *barra_y,
+						int *indicatore_x, int *indicatore_y,
+						int *freccia_x, int *freccia_y);
+void collisione_portiere(void);
+int bordo_collisione(retta_t r1, retta_t r2, retta_t r3, retta_t r4);
+void calcolo_rette(retta_t *r1, retta_t *r2, 
+					retta_t *r3, retta_t *r4);
+void collisione_bordi(void);
+
+
 #endif

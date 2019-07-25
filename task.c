@@ -8,11 +8,16 @@ BITMAP *bground_b;
 BITMAP *portiere_b;
 BITMAP *palla_b;
 BITMAP *porta_b;
+BITMAP *indicatore_b;
+BITMAP *barra_b;
+BITMAP *freccia_b;
 
 palla_t palla;
 portiere_t portiere;
 campo_t campo;
 freccia_t freccia;
+
+int shot = 0;
 
 int low_x, up_x, low_y, up_y;
 int user_id;
@@ -32,10 +37,13 @@ void task_portiere(void){
 		next_pos_palla = portiere.pos.x;
 
 		pthread_mutex_lock(&palla.m);
-		if(palla.v.x != 0 && palla.v.y != 0){
+		if(palla.v.y != 0)
 			next_pos_palla = (int)(	(double)palla.pos.x + 
 									(double)palla.v.x/BALL_SCALING_FACTOR * 									POR_ANTICIPATION_MS);
-		}
+		else if(palla.v.x != 0)
+			next_pos_palla = (int)(	(double)palla.pos.x + 
+									(double)palla.v.x/BALL_SCALING_FACTOR * 									POR_ANTICIPATION_MS);
+
 		pthread_mutex_unlock(&palla.m);
 		
 		tmp_dir = next_pos_palla - portiere.pos.x;
@@ -105,167 +113,23 @@ void task_palla(void){
 }
 
 
-void collisione_bordi(void){
-	// variabili booleane che rilevano una collisione
-	int outl;
-	int outr;
-	int outt;
-	int outb;
-
-	// margine della pallina, uguale per ogni asse tanto è quadrata
-	int margin;
-	
-	margin = palla_b->w/2 + 10;
-	//calcolo le collisioni contro i bordi
-	outl = (palla.pos.x <= campo.border_x.low + margin);
-	outr = (palla.pos.x >= campo.border_x.up - margin);
-	outt = (palla.pos.y <= campo.border_y.low + margin);
-	outb = (palla.pos.y >= campo.border_y.up - margin);
-	
-	if(outl)
-		palla.pos.x = campo.border_x.low + margin;
-	if(outr)
-        palla.pos.x = campo.border_x.up - margin;
-	if(outl || outr)
-		palla.v.x = -palla.v.x;
-	
-	if(outt)
-        palla.pos.y = campo.border_y.low + margin;
-	if(outb)
-        palla.pos.y = campo.border_y.up - margin;
-	if(outt || outb)
-        palla.v.y = -palla.v.y;
-}        
-
-
-void calcolo_rette(retta_t *r1, retta_t *r2, 
-					retta_t *r3, retta_t *r4){
-
-	// dichiaraz delle rette
-	//			r1	
-	//		---------
-	//	r3	|       | r2
-	//		|       |
-	//		---------
-	//			r4
-
-
-	*r1 = retta_due_punti(	(vector_t){low_x, low_y}, 
-							(vector_t){up_x, low_y});
-
-	*r2 = retta_due_punti(	(vector_t){up_x, low_y}, 
-							(vector_t){up_x, up_y});
-
-	*r3 = retta_due_punti(	(vector_t){low_x, low_y}, 
-							(vector_t){low_x, up_y});
-
-	*r4 = retta_due_punti(	(vector_t){low_x, up_y}, 
-							(vector_t){up_x, up_y});
-}
-
-
-// funzione che ritorna l'indice relativo al lato della collisione
-int bordo_collisione(retta_t r1, retta_t r2, retta_t r3, retta_t r4){
-	int i;
-	int best = L4;
-	double min = M;
-	double d[LATI+1];
-
-	d[1] = dist_punto_retta(palla.pos, r1);
-	d[2] = dist_punto_retta(palla.pos, r2);
-	d[3] = dist_punto_retta(palla.pos, r3);
-	d[4] = dist_punto_retta(palla.pos, r4);
-	
-	for(i = 1 ; i < LATI+1; i++){
-		if(d[i] < min){
-			min = d[i];
-			best = i;
-		}
-	}
-
-	return best;
-}
-
-
-void collisione_portiere(void){
-	int coll_x, coll_y;
-	int col_border;
-	retta_t r1, r2, r3, r4;
-
-	// init dei bordi
-	low_x = portiere.pos.x - portiere_b->w/2;
-	up_x = portiere.pos.x + portiere_b->w/2;
-	low_y = portiere.pos.y - portiere_b->h/2;
-	up_y = portiere.pos.y + portiere_b->h/2;
-
-	// è in collisione se la palla è compresa
-	coll_x = (palla.pos.x <= up_x && palla.pos.x >= low_x);
-	coll_y = (palla.pos.y <= up_y && palla.pos.y >= low_y);
-
-	if(!(coll_x && coll_y)) return;
-
-	// trovo le rette passanti per i lati della bitmap portiere
-	calcolo_rette(&r1, &r2, &r3, &r4);
-	
-	// ho il bordo con cui è venuta la collisione
-	col_border = bordo_collisione(r1, r2, r3, r4);
-
-	// infine faccio controllo
-	// rifletto lungo asse y
-	if(col_border == L2){
-		palla.pos.x = up_x;
-		palla.v = reflect_y(palla.v);
-	}
-	if(col_border == L3){
-		palla.pos.x = low_x;
-		palla.v = reflect_y(palla.v);
-	}
-
-	// rifletto lungo asse x
-	// NB --->	non controllo la collisione con il lato L1
-	//			perchè significa che ho fatto goal, la pallina 
-	// 			non deve rimbalzare quindi dietro al portiere
-	//			semplicemente rimbalzerà contro il bordo e il
-	//			portiere la butterà fuori dala porta
-	/*if(col_border == L1){
-		palla.pos.y = low_y;
-		palla.v = reflect_x(palla.v);
-	}*/
-	if(col_border == L4){
-		palla.pos.y = up_y;
-		palla.v = reflect_x(palla.v);
-	}
-	
-}
-
-void leggi_coordinate(	int *palla_x, int *palla_y, 
-						int *portiere_x, int *portiere_y){
-
-	//ottengo le coordinate della palla
-	*palla_x = palla.pos.x;
-	*palla_y = palla.pos.y;
-
-	//ottengo le coordinate del portiere
-    *portiere_x = portiere.pos.x;
-    *portiere_y = portiere.pos.y;
-
-	//decentro palla e portiere
-	*palla_x = decenter_x(palla_b, *palla_x);
-	*palla_y = decenter_y(palla_b, *palla_y);
-	*portiere_x = decenter_x(portiere_b, *portiere_x);
-	*portiere_y = decenter_y(portiere_b, *portiere_y);
-}
-
 void task_grafico(void){
 	int palla_x;
 	int palla_y;
 	int portiere_x;
     int portiere_y;
+	int barra_x, barra_y;
+	int indicatore_x, indicatore_y;
+	int freccia_x, freccia_y;
 	
 	/*int i;
 	i = ptask_get_index();*/
 	while(1){	
-		leggi_coordinate(&palla_x, &palla_y, &portiere_x, &portiere_y);
+		leggi_coordinate(&palla_x, &palla_y, 
+						&portiere_x, &portiere_y,
+						&barra_x, &barra_y,
+						&indicatore_x, &indicatore_y,
+						&freccia_x, &freccia_y);
 
 		//disegno campo,portiere,palla
 		blit(bground_b, screen, 0, 0, 
@@ -273,6 +137,16 @@ void task_grafico(void){
 				SCREEN_W, SCREEN_H);
 		draw_sprite(screen, portiere_b, portiere_x, portiere_y);
 		draw_sprite(screen, palla_b, palla_x, palla_y);
+
+
+		if(palla.v.x == 0 && palla.v.y == 0) {
+			draw_sprite(screen, barra_b, barra_x, barra_y);
+			draw_sprite(screen, indicatore_b, indicatore_x, 
+												indicatore_y);
+			line(screen, palla_x + palla_b->w/2, palla_y + palla_b->h/2, 
+					palla_x + freccia_x * 10 , 
+					palla_y - freccia_y * 10, 15);
+		}
 
 		pthread_mutex_lock(&palla.m);
 		pthread_mutex_lock(&portiere.m);
@@ -286,26 +160,28 @@ void task_grafico(void){
 	
 }
 
+
 void task_user(void){
 	double tmp_v_x, tmp_v_y;
 	int pot;
 
 	// potenza tiro massima lungo ogni componente è 300
 	ptask_wait_for_activation();
-	while(1){
-		
+	while(1){		
+
 		while(!key[KEY_SPACE]){ }	
 		
 		pthread_mutex_lock(&freccia.m);
 		tmp_v_x = freccia.x;
 		tmp_v_y = freccia.y;
+		freccia.dir_chosen = 1;
 		pthread_mutex_unlock(&freccia.m);
 	
 		key[KEY_SPACE] = 0;
 		while(!key[KEY_SPACE]){ }
 		
 		pthread_mutex_lock(&freccia.m);
-		pot = freccia.pot;
+		pot = freccia.pot / POWER_SCALER;
 		pthread_mutex_unlock(&freccia.m);
 
 		set_velocita_palla((int)tmp_v_x*pot, (int)tmp_v_y*pot);
@@ -316,18 +192,20 @@ void task_user(void){
 }
 
 void task_freccia(void){
-	double adder = 0.1;
+	double adder = SPEED_ARROW;
 	int raggio = 10;
 	
 	while(1){
 		
 		pthread_mutex_lock(&freccia.m);
-		if(freccia.x <= -10) 
-			adder = 0.1;
-		if(freccia.x >= 10) 
-			adder = -0.1;
-		freccia.x += adder;
-		freccia.y = sqrt(raggio * raggio - (freccia.x * freccia.x));
+		if(freccia.dir_chosen == 0) {
+			if(freccia.x <= -raggio) 
+				adder = SPEED_ARROW;
+			if(freccia.x >= raggio) 
+				adder = -SPEED_ARROW;
+			freccia.x += adder;
+			freccia.y = sqrt(raggio * raggio - (freccia.x * freccia.x));
+		}
 		pthread_mutex_unlock(&freccia.m);
 		
 		ptask_wait_for_period();
@@ -343,11 +221,12 @@ void task_potenza(void){
 	while(1){
 
 		pthread_mutex_lock(&freccia.m);
-		if(freccia.pot >= 30)
-			adder = -1;
+		if(freccia.pot >= barra_b->h - 45)
+			adder = -SPEED_INDICATOR;
 		if(freccia.pot <= 0)
-			adder = 1;
+			adder = SPEED_INDICATOR;
 		freccia.pot += adder;
+		freccia.indicatore.y -= adder;
 		pthread_mutex_unlock(&freccia.m);
 	
 		ptask_wait_for_period();

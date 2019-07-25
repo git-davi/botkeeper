@@ -8,11 +8,14 @@
 #define T 30	// period of tasks
 #define C 5		// capacity of tasks
 
-
 #define POR_SCALING_FACTOR 5
 #define POR_ANTICIPATION_MS 100
 #define BALL_SCALING_FACTOR 500
 #define FRICTION_FACTOR 1
+
+#define SPEED_INDICATOR 10
+#define POWER_SCALER 7
+#define SPEED_ARROW 0.5
 
 #define M 1000000000000000000
 #define PRIO 99
@@ -29,11 +32,16 @@ extern BITMAP *bground_b;
 extern BITMAP *portiere_b;
 extern BITMAP *palla_b;
 extern BITMAP *porta_b;
+extern BITMAP *indicatore_b;
+extern BITMAP *barra_b;
+extern BITMAP *freccia_b;
 
 extern palla_t palla;
 extern portiere_t portiere;
 extern campo_t campo;
 extern freccia_t freccia;
+
+extern int low_x, up_x, low_y, up_y;
 
 // funzione per l'avvio di tutti i task
 void init_tasks(void);

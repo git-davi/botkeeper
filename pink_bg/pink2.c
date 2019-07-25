@@ -9,8 +9,8 @@ int main(void){
 	PALETTE pal;
 	int x, y, c;
 	int white, pink;
-	int new_w = 40;
-	int new_h = 40;
+	int new_w = 32;
+	int new_h = 280;
 
 	
 	allegro_init();
@@ -21,7 +21,7 @@ int main(void){
 	pink = makecol(255, 0, 255);
 
 	// creo gli sprite
-	orig = load_bitmap("img/palla.bmp", NULL);
+	orig = load_bitmap("barra.bmp", NULL);
 	tmp = create_bitmap(new_w, new_h);
 	final = create_bitmap(new_w, new_h);
 
@@ -39,7 +39,7 @@ int main(void){
 	}
 
 	get_palette(pal);
-	save_bitmap("img/palla_p.bmp", final, pal);
+	save_bitmap("barra_p.bmp", final, pal);
 
 	allegro_exit();
 	return 0;
