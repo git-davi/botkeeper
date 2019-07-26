@@ -16,6 +16,7 @@ palla_t palla;
 portiere_t portiere;
 campo_t campo;
 freccia_t freccia;
+potenza_t potenza;
 
 int shot = 0;
 
@@ -86,15 +87,14 @@ void task_palla(void){
 		//				affinchè il vettore abbia senso
 
 		// attrito rallenta la palla
+		
 		/*
-		questa versione decresce esponenzialmente FRICTION_FACTOR^N
+		//questa versione decresce esponenzialmente FRICTION_FACTOR^N
 		palla.v.x = (int)((double)palla.v.x * FRICTION_FACTOR);
 		palla.v.y = (int)((double)palla.v.y * FRICTION_FACTOR);
 		*/
-		if(palla.v.x == 0)
-			ratio = (double)abs(palla.v.y) / 1;	
-		else
-			ratio = (double)abs(palla.v.y) / (double)abs(palla.v.x);
+		
+		ratio = (double)abs(palla.v.y) / (double)abs(palla.v.x);
 		if(palla.v.x != 0)
 			palla.v.x = sign(palla.v.x) * (abs(palla.v.x) - FRICTION_FACTOR); 
 		if(palla.v.y != 0)
@@ -178,11 +178,16 @@ void task_user(void){
 		pthread_mutex_unlock(&freccia.m);
 	
 		key[KEY_SPACE] = 0;
-		while(!key[KEY_SPACE]){ }
 		
-		pthread_mutex_lock(&freccia.m);
-		pot = freccia.pot / POWER_SCALER;
+		while(!key[KEY_SPACE]){ }
+
+		pthread_mutex_lock(&freccia.m);		
+		freccia.dir_chosen = 0;
 		pthread_mutex_unlock(&freccia.m);
+		
+		pthread_mutex_lock(&potenza.m);
+		pot = potenza.pot / POWER_SCALER;
+		pthread_mutex_unlock(&potenza.m);
 
 		set_velocita_palla((int)tmp_v_x*pot, (int)tmp_v_y*pot);
 
@@ -220,14 +225,14 @@ void task_potenza(void){
 
 	while(1){
 
-		pthread_mutex_lock(&freccia.m);
-		if(freccia.pot >= barra_b->h - 45)
+		pthread_mutex_lock(&potenza.m);
+		if(potenza.pot >= barra_b->h - 45)
 			adder = -SPEED_INDICATOR;
-		if(freccia.pot <= 0)
+		if(potenza.pot <= 0)
 			adder = SPEED_INDICATOR;
-		freccia.pot += adder;
-		freccia.indicatore.y -= adder;
-		pthread_mutex_unlock(&freccia.m);
+		potenza.pot += adder;
+		potenza.indicatore.y -= adder;
+		pthread_mutex_unlock(&potenza.m);
 	
 		ptask_wait_for_period();
 

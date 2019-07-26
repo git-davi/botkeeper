@@ -1,5 +1,6 @@
 // file per le funzioni ausialiarie
 #include <math.h>
+#include <stdio.h>
 #include "util.h"
 #include "task.h"
 
@@ -61,15 +62,15 @@ int sign(int x){
 }
 
 void set_velocita_palla(int x, int y){
-	
+
+	// perchè il ratio diventerebbe nan
+	if(x == 0) x = 1;	
+
 	pthread_mutex_lock(&palla.m);	
 	palla.v.x = x;
 	palla.v.y = y;
 	pthread_mutex_unlock(&palla.m);
 
-	pthread_mutex_lock(&freccia.m);
-	freccia.dir_chosen = 0;
-	pthread_mutex_unlock(&freccia.m);
 }
 
 
@@ -226,13 +227,16 @@ void leggi_coordinate(	int *palla_x, int *palla_y,
 
 	//ottengo coordinate della freccia e barra
 	pthread_mutex_lock(&freccia.m);
-	*barra_x = freccia.barra.x;
-	*barra_y = freccia.barra.y;
-	*indicatore_x = freccia.indicatore.x;
-	*indicatore_y = freccia.indicatore.y;
 	*freccia_x = (int)freccia.x;
 	*freccia_y = (int)freccia.y;
 	pthread_mutex_unlock(&freccia.m);
+
+	pthread_mutex_lock(&potenza.m);
+	*barra_x = potenza.barra.x;
+	*barra_y = potenza.barra.y;
+	*indicatore_x = potenza.indicatore.x;
+	*indicatore_y = potenza.indicatore.y;
+	pthread_mutex_unlock(&potenza.m);
 
 	//decentro palla e portiere
 	*palla_x = decenter_x(palla_b, *palla_x);

@@ -40,6 +40,7 @@ extern palla_t palla;
 extern portiere_t portiere;
 extern campo_t campo;
 extern freccia_t freccia;
+extern potenza_t potenza;
 
 extern int low_x, up_x, low_y, up_y;
 

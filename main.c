@@ -20,6 +20,7 @@ void init_attr(void){
 	pthread_mutex_init(&palla.m, &ma);
 	pthread_mutex_init(&portiere.m, &ma);
 	pthread_mutex_init(&freccia.m, &ma);
+	pthread_mutex_init(&potenza.m, &ma);
 }
 
 void init_freccia(void){
@@ -29,7 +30,6 @@ void init_freccia(void){
 			palla.pos.y - (int)freccia.y, 15);
 
 
-	freccia.pot = 0;
 	freccia.x = -1;
 	freccia.y = 0;
 	freccia.dir_chosen = 0;
@@ -44,9 +44,10 @@ void init_barra_indicatore(void){
 		exit(1);
 	}
 
-	freccia.barra.x = campo.border_x.up - barra_b->w - 40;
-	freccia.barra.y = campo.border_y.up - barra_b->h;
-	draw_sprite(screen, barra_b, freccia.barra.x, freccia.barra.y);
+	potenza.pot = 0;
+	potenza.barra.x = campo.border_x.up - barra_b->w - 40;
+	potenza.barra.y = campo.border_y.up - barra_b->h;
+	draw_sprite(screen, barra_b, potenza.barra.x, potenza.barra.y);
 	
 
 
@@ -56,9 +57,9 @@ void init_barra_indicatore(void){
 		exit(1);
 	}
 
-	freccia.indicatore.x = freccia.barra.x + barra_b->w;
-	freccia.indicatore.y = freccia.barra.y + barra_b->h - 31;
-	draw_sprite(screen, indicatore_b, freccia.indicatore.x, freccia.indicatore.y);
+	potenza.indicatore.x = potenza.barra.x + barra_b->w;
+	potenza.indicatore.y = potenza.barra.y + barra_b->h - 31;
+	draw_sprite(screen, indicatore_b, potenza.indicatore.x, potenza.indicatore.y);
 }
 
 void init_bground(void){
