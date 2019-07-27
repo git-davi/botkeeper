@@ -63,9 +63,6 @@ int sign(int x){
 
 void set_velocita_palla(int x, int y){
 
-	// perchè il ratio diventerebbe nan
-	if(x == 0) x = 1;	
-
 	pthread_mutex_lock(&palla.m);	
 	palla.v.x = x;
 	palla.v.y = y;

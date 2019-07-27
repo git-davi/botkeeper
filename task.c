@@ -71,7 +71,6 @@ void task_portiere(void){
 }
 
 void task_palla(void){
-	double ratio;
 	// aggiorno posizione della palla
 	/*int i;
 	i = ptask_get_index();*/
@@ -88,18 +87,9 @@ void task_palla(void){
 
 		// attrito rallenta la palla
 		
-		/*
 		//questa versione decresce esponenzialmente FRICTION_FACTOR^N
 		palla.v.x = (int)((double)palla.v.x * FRICTION_FACTOR);
 		palla.v.y = (int)((double)palla.v.y * FRICTION_FACTOR);
-		*/
-		
-		ratio = (double)abs(palla.v.y) / (double)abs(palla.v.x);
-		if(palla.v.x != 0)
-			palla.v.x = sign(palla.v.x) * (abs(palla.v.x) - FRICTION_FACTOR); 
-		if(palla.v.y != 0)
-			palla.v.y = sign(palla.v.y) * (abs(palla.v.y) - 
-													FRICTION_FACTOR * ratio);	
 		
 
 		if(palla.v.x == 0 && palla.v.y == 0)
@@ -140,12 +130,12 @@ void task_grafico(void){
 
 
 		if(palla.v.x == 0 && palla.v.y == 0) {
+			line(screen, palla_x + palla_b->w/2, palla_y + palla_b->h/2, 
+												palla_x + freccia_x * 10 , 
+												palla_y - freccia_y * 10, 15);
 			draw_sprite(screen, barra_b, barra_x, barra_y);
 			draw_sprite(screen, indicatore_b, indicatore_x, 
 												indicatore_y);
-			line(screen, palla_x + palla_b->w/2, palla_y + palla_b->h/2, 
-					palla_x + freccia_x * 10 , 
-					palla_y - freccia_y * 10, 15);
 		}
 
 		pthread_mutex_lock(&palla.m);
