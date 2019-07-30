@@ -79,9 +79,10 @@ void collisione_bordi(void){
 	int outb;
 
 	// margine della pallina, uguale per ogni asse tanto è quadrata
-	int margin;
+	int margin;	
+
 	
-	margin = palla_b->w/2 + 10;
+	margin = palla_b->w/2;
 	//calcolo le collisioni contro i bordi
 	outl = (palla.pos.x <= campo.border_x.low + margin);
 	outr = (palla.pos.x >= campo.border_x.up - margin);

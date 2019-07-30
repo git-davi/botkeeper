@@ -17,6 +17,7 @@ portiere_t portiere;
 campo_t campo;
 freccia_t freccia;
 potenza_t potenza;
+porta_t porta;
 
 int shot = 0;
 
@@ -111,6 +112,10 @@ void task_grafico(void){
 	int barra_x, barra_y;
 	int indicatore_x, indicatore_y;
 	int freccia_x, freccia_y;
+
+	//color
+	int rosso = makecol(255, 0, 0);
+	int nero = makecol(0, 0, 0);
 	
 	/*int i;
 	i = ptask_get_index();*/
@@ -121,18 +126,27 @@ void task_grafico(void){
 						&indicatore_x, &indicatore_y,
 						&freccia_x, &freccia_y);
 
-		//disegno campo,portiere,palla
+		// pulisco lo schermo 
+		rectfill(screen, 0, SCREEN_H, SCREEN_W, 0, nero);
+
+		//disegno campo, porta,portiere,palla
 		blit(bground_b, screen, 0, 0, 
 				campo.border_x.low, campo.border_y.low,
+				SCREEN_W, SCREEN_H);
+		blit(porta_b, screen, 0, 0, 
+				porta.pos.x, 
+				porta.pos.y, 
 				SCREEN_W, SCREEN_H);
 		draw_sprite(screen, portiere_b, portiere_x, portiere_y);
 		draw_sprite(screen, palla_b, palla_x, palla_y);
 
 
 		if(palla.v.x == 0 && palla.v.y == 0) {
-			line(screen, palla_x + palla_b->w/2, palla_y + palla_b->h/2, 
-												palla_x + freccia_x * 10 , 
-												palla_y - freccia_y * 10, 15);
+			line(screen, center_x(palla_b, palla_x), 
+						center_y(palla_b, palla_y), 
+						center_x(palla_b, palla_x) + freccia_x * RAGGIO_FRECCIA , 
+						center_y(palla_b, palla_y) - freccia_y * RAGGIO_FRECCIA, 
+						rosso);
 			draw_sprite(screen, barra_b, barra_x, barra_y);
 			draw_sprite(screen, indicatore_b, indicatore_x, 
 												indicatore_y);
@@ -188,18 +202,18 @@ void task_user(void){
 
 void task_freccia(void){
 	double adder = SPEED_ARROW;
-	int raggio = 10;
 	
 	while(1){
 		
 		pthread_mutex_lock(&freccia.m);
 		if(freccia.dir_chosen == 0) {
-			if(freccia.x <= -raggio) 
+			if(freccia.angle <= 0) 
 				adder = SPEED_ARROW;
-			if(freccia.x >= raggio) 
+			if(freccia.angle >= M_PI) 
 				adder = -SPEED_ARROW;
-			freccia.x += adder;
-			freccia.y = sqrt(raggio * raggio - (freccia.x * freccia.x));
+			freccia.x = cos(freccia.angle) * RAGGIO_FRECCIA;
+			freccia.y = sin(freccia.angle) * RAGGIO_FRECCIA;
+			freccia.angle += adder;
 		}
 		pthread_mutex_unlock(&freccia.m);
 		
@@ -235,7 +249,7 @@ void init_tasks(void){
 	user_id = ptask_create_prio(task_user, T, PRIO, NOW);
 	ptask_create_edf(task_palla, T, C, T, NOW);
 	ptask_create_edf(task_portiere, T, C, T, NOW);
-	ptask_create_edf(task_grafico, T, C, T, NOW);
+	ptask_create_edf(task_grafico, FRAME_RATE, FRAME_C, FRAME_RATE, NOW);
 	ptask_create_edf(task_potenza, T, C, T, NOW);
 	ptask_create_edf(task_freccia, T, C, T, NOW);
 }

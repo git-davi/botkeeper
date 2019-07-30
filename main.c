@@ -24,15 +24,13 @@ void init_attr(void){
 }
 
 void init_freccia(void){
-	
-	line(screen, palla.pos.x, palla.pos.y, 
-			palla.pos.x + (int)freccia.x , 
-			palla.pos.y - (int)freccia.y, 15);
 
-
-	freccia.x = -1;
+	// da aggiustare	
+	freccia.x = -RAGGIO_FRECCIA;
 	freccia.y = 0;
 	freccia.dir_chosen = 0;
+	freccia.angle = M_PI;
+
 }
 
 
@@ -110,7 +108,7 @@ void init_portiere(void){
 
 
 void init_palla(void){
-	// size di palla_p : 100x100 
+	// size di palla_p : 40x40 
 	int x, y;
 
 	palla_b = load_bitmap("img/palla_p.bmp", NULL);
@@ -124,7 +122,7 @@ void init_palla(void){
 
 	palla.pos.x = center_x(palla_b, x);
 	palla.pos.y = center_y(palla_b, y);
-	//la potenza della palla deve essere al massimo 300
+
 	palla.v.x = 0;
 	palla.v.y = 0;
 
@@ -145,8 +143,10 @@ void init_porta(void){
 
 	porta_b = create_bitmap(w, h);
 	stretch_sprite(porta_b, tmp, 0, 0, w, h);
-	blit(porta_b, screen, 0, 0, SCREEN_W/2 - porta_b->w/2, 
-								bground_y - porta_b->h, 
+	porta.pos.x = SCREEN_W/2 - porta_b->w/2;
+	porta.pos.y = bground_y - porta_b->h;
+	blit(porta_b, screen, 0, 0, porta.pos.x, 
+								porta.pos.y, 
 								SCREEN_W, SCREEN_H);
 	
 	portiere.border.low = SCREEN_W/2 - porta_b->w/2;

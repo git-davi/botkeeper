@@ -18,6 +18,7 @@ typedef struct vector_t {
 
 typedef struct freccia_t {
 	double x, y;			//direzione freccia
+	double angle;
 	int dir_chosen;
 	pthread_mutex_t m;
 } freccia_t;
@@ -52,6 +53,10 @@ typedef struct campo_t {
     border_t border_x;
 	border_t border_y;
 } campo_t;
+
+typedef struct porta_t {
+	vector_t pos;
+} porta_t;
 
 
 #endif

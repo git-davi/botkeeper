@@ -5,8 +5,10 @@
 #include "allegro.h"
 #include <math.h>
 
-#define T 30	// period of tasks
+#define T 40	// period of tasks
 #define C 5		// capacity of tasks
+#define FRAME_RATE 20
+#define FRAME_C 10
 
 #define POR_SCALING_FACTOR 5
 #define POR_ANTICIPATION_MS 100
@@ -15,7 +17,8 @@
 
 #define SPEED_INDICATOR 10
 #define POWER_SCALER 7
-#define SPEED_ARROW 0.5
+#define SPEED_ARROW 0.1
+#define RAGGIO_FRECCIA 10
 
 #define M 1000000000000000000
 #define PRIO 99
@@ -41,6 +44,7 @@ extern portiere_t portiere;
 extern campo_t campo;
 extern freccia_t freccia;
 extern potenza_t potenza;
+extern porta_t porta;
 
 extern int low_x, up_x, low_y, up_y;
 
