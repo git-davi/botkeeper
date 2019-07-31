@@ -5,10 +5,10 @@
 #include "allegro.h"
 #include <math.h>
 
-#define T 35	// period of tasks
+#define T 40	// period of tasks
 #define C 5		// capacity of tasks
-#define FRAME_RATE 30
-#define FRAME_C 10
+#define FRAME_RATE 40
+#define FRAME_C 15
 
 #define POR_SCALING_FACTOR 5
 #define POR_ANTICIPATION_MS 100
