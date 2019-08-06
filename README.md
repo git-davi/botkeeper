@@ -14,7 +14,7 @@ To play this game you will need :
 *Note : While cloning this repo you will also get the ptask library, so don't worry on installing it!*
 
 
-# How to install Allegro and ptask
+## How to install Allegro and ptask
 
 From Linux terminal :
 ```bash
