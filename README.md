@@ -56,7 +56,7 @@ we also implemented a sort of prediction for better block.
 the task will store the of S_frec and S_pow in the **ball state**.
 - τ_grafico -> The task that periodically reads the info of each state and draws on screen.
 
-![](!img/architecture.png)
+![](img/architecture.png)
 
 ## Troubleshooting
 
